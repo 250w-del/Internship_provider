@@ -1,18 +1,24 @@
 import axios from 'axios';
 
+// In production (Vercel), VITE_API_URL points to the Render backend.
+// In development, Vite proxy handles /api → localhost:5000.
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach token to every request
+// Attach JWT token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Handle 401 globally
+// Handle 401 globally — clear auth and redirect to login
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -26,19 +32,19 @@ api.interceptors.response.use(
   }
 );
 
-// Auth
+// ── Auth ──────────────────────────────────────────────────────
 export const authAPI = {
   registerStudent: (data) => api.post('/auth/register/student', data),
   registerCompany: (data) => api.post('/auth/register/company', data),
   login: (data) => api.post('/auth/login', data),
 };
 
-// Public internships
+// ── Public internships ────────────────────────────────────────
 export const publicAPI = {
   getInternships: (params) => api.get('/internships/public', { params }),
 };
 
-// Student
+// ── Student ───────────────────────────────────────────────────
 export const studentAPI = {
   getProfile: () => api.get('/students/profile'),
   updateProfile: (data) => api.put('/students/profile', data),
@@ -50,7 +56,7 @@ export const studentAPI = {
   getApplications: (params) => api.get('/students/applications', { params }),
 };
 
-// Company
+// ── Company ───────────────────────────────────────────────────
 export const companyAPI = {
   getProfile: () => api.get('/companies/profile'),
   updateProfile: (data) => api.put('/companies/profile', data),
@@ -64,7 +70,7 @@ export const companyAPI = {
     api.delete(`/companies/internships/${internshipId}`),
 };
 
-// Admin
+// ── Admin ─────────────────────────────────────────────────────
 export const adminAPI = {
   getDashboard: () => api.get('/admin/dashboard'),
   getStudents: (params) => api.get('/admin/students', { params }),

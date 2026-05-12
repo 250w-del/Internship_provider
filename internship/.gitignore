@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Environment files — NEVER commit these
+.env
+.env.local
+.env.production
+client/.env.production
+client/.env.local
+
+# Build output
+client/dist/
+
+# Uploads (user files)
+uploads/cvs/*
+!uploads/cvs/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
