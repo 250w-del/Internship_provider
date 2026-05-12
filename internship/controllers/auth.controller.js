@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const StudentModel = require('../models/Student.model');
 const CompanyModel = require('../models/Company.model');
-const AdminModel = require('../models/Admin.model');
 
 const generateToken = (id, role) => {
     return jwt.sign({ id, role }, process.env.JWT_SECRET, {

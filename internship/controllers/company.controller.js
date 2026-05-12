@@ -13,8 +13,13 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const { company_name, phone, location } = req.body;
-        await CompanyModel.update(req.userId, { company_name, phone, location });
+        const { company_name, phone, location, description } = req.body;
+        await CompanyModel.update(req.userId, {
+            company_name: company_name || undefined,
+            phone: phone || undefined,
+            location: location || undefined,
+            description: description || undefined
+        });
         const updatedCompany = await CompanyModel.findById(req.userId);
         res.json({ success: true, company: updatedCompany });
     } catch (error) {
@@ -24,16 +29,25 @@ const updateProfile = async (req, res) => {
 
 const postInternship = async (req, res) => {
     try {
-        const { title, description, requirements, deadline } = req.body;
+        const { title, description, requirements, trade, level_required, location, duration, deadline } = req.body;
+
+        if (!title || !trade || !deadline) {
+            return res.status(400).json({ success: false, message: 'Title, trade and deadline are required' });
+        }
+
         const internshipId = await InternshipModel.create({
             company_id: req.userId,
             title,
-            description,
-            requirements,
+            description: description || null,
+            requirements: requirements || null,
+            trade,
+            level_required: level_required || 'Any',
+            location: location || null,
+            duration: duration || null,
             deadline,
             status: 'pending'
         });
-        
+
         const internship = await InternshipModel.findById(internshipId);
         res.status(201).json({ success: true, internship });
     } catch (error) {

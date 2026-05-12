@@ -5,7 +5,7 @@ class StudentModel {
         const { full_name, email, phone, trade, level, school, password } = studentData;
         const [result] = await promisePool.execute(
             'INSERT INTO students (full_name, email, phone, trade, level, school, password) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [full_name, email, phone, trade, level, school || null, password]
+            [full_name, email, phone || null, trade, level, school || null, password]
         );
         return result.insertId;
     }

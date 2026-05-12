@@ -1,14 +1,17 @@
 import React from 'react';
-import { FiMapPin, FiClock, FiCalendar, FiBookOpen, FiArrowRight } from 'react-icons/fi';
-import { TRADE_COLORS } from '../constants/trades';
+import { FiMapPin, FiClock, FiCalendar, FiPhone, FiArrowRight } from 'react-icons/fi';
+import { TRADE_COLORS, TRADES } from '../constants/trades';
 
 const InternshipCard = ({ internship, onApply, showApply = false, applied = false }) => {
   const {
     internship_id, title, description, trade, level_required,
-    company_name, company_location, location, duration, deadline, status
+    company_name, company_location, company_phone,
+    location, duration, deadline
   } = internship;
 
   const tradeColor = TRADE_COLORS[trade] || 'bg-gray-100 text-gray-800 border-gray-200';
+  const tradeInfo = TRADES.find(t => t.code === trade);
+
   const deadlineDate = new Date(deadline);
   const today = new Date();
   const daysLeft = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
@@ -16,9 +19,10 @@ const InternshipCard = ({ internship, onApply, showApply = false, applied = fals
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 flex flex-col">
+
       {/* Card Header */}
       <div className="p-5 pb-3">
-        <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-start gap-3 mb-3">
           {/* Company avatar */}
           <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-sm">
             {(company_name || 'C').charAt(0)}
@@ -32,7 +36,7 @@ const InternshipCard = ({ internship, onApply, showApply = false, applied = fals
         {/* Badges */}
         <div className="flex flex-wrap gap-1.5 mb-3">
           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${tradeColor}`}>
-            {trade}
+            {tradeInfo ? `${tradeInfo.icon} ${trade}` : trade}
           </span>
           {level_required && level_required !== 'Any' && (
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
@@ -70,6 +74,18 @@ const InternshipCard = ({ internship, onApply, showApply = false, applied = fals
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <FiCalendar size={12} className="text-gray-400 flex-shrink-0" />
             <span>Deadline: {new Date(deadline).toLocaleDateString('en-RW', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+          </div>
+        )}
+        {/* Company phone number */}
+        {company_phone && (
+          <div className="flex items-center gap-2 text-xs">
+            <FiPhone size={12} className="text-green-500 flex-shrink-0" />
+            <a
+              href={`tel:${company_phone}`}
+              className="text-green-600 hover:text-green-700 font-medium hover:underline transition-colors"
+            >
+              {company_phone}
+            </a>
           </div>
         )}
       </div>

@@ -5,7 +5,7 @@ class CompanyModel {
         const { company_name, email, phone, location, description, password } = companyData;
         const [result] = await promisePool.execute(
             'INSERT INTO companies (company_name, email, phone, location, description, password) VALUES (?, ?, ?, ?, ?, ?)',
-            [company_name, email, phone, location, description || null, password]
+            [company_name, email, phone || null, location || null, description || null, password]
         );
         return result.insertId;
     }

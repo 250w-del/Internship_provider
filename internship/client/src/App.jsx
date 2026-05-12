@@ -13,17 +13,27 @@ import StudentProfile from './pages/student/StudentProfile';
 import StudentApplications from './pages/student/StudentApplications';
 import StudentInternships from './pages/student/StudentInternships';
 import CompanyDashboard from './pages/company/CompanyDashboard';
+import CompanyProfile from './pages/company/CompanyProfile';
 import CompanyApplications from './pages/company/CompanyApplications';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import LoadingSpinner from './components/LoadingSpinner';
 
+// Redirect logged-in users away from auth pages
+const GuestRoute = ({ children }) => {
+  const { user, role, loading } = useAuth();
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="lg" /></div>;
+  if (user) {
+    if (role === 'admin') return <Navigate to="/admin/dashboard" replace />;
+    if (role === 'company') return <Navigate to="/company/dashboard" replace />;
+    return <Navigate to="/student/dashboard" replace />;
+  }
+  return children;
+};
+
+// Protect routes that require auth
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, role, loading } = useAuth();
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <LoadingSpinner size="lg" text="Loading..." />
-    </div>
-  );
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner size="lg" text="Loading..." /></div>;
   if (!user) return <Navigate to="/login" replace />;
   if (allowedRoles && !allowedRoles.includes(role)) return <Navigate to="/" replace />;
   return children;
@@ -37,11 +47,13 @@ const AppRoutes = () => {
         <Routes>
           {/* Public */}
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/internships" element={<Internships />} />
 
-          {/* Student */}
+          {/* Auth — redirect if already logged in */}
+          <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+          <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+
+          {/* ── Student ── */}
           <Route path="/student/dashboard" element={
             <ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>
           } />
@@ -55,33 +67,23 @@ const AppRoutes = () => {
             <ProtectedRoute allowedRoles={['student']}><StudentInternships /></ProtectedRoute>
           } />
 
-          {/* Company */}
+          {/* ── Company ── */}
           <Route path="/company/dashboard" element={
             <ProtectedRoute allowedRoles={['company']}><CompanyDashboard /></ProtectedRoute>
           } />
           <Route path="/company/dashboard/profile" element={
-            <ProtectedRoute allowedRoles={['company']}>
-              <div className="p-8 max-w-2xl mx-auto">
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">Company Profile</h1>
-                <p className="text-gray-500">Profile settings coming soon.</p>
-              </div>
-            </ProtectedRoute>
+            <ProtectedRoute allowedRoles={['company']}><CompanyProfile /></ProtectedRoute>
           } />
           <Route path="/company/dashboard/internships/:internshipId/applications" element={
             <ProtectedRoute allowedRoles={['company']}><CompanyApplications /></ProtectedRoute>
           } />
 
-          {/* Admin */}
+          {/* ── Admin ── */}
           <Route path="/admin/dashboard" element={
             <ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>
           } />
           <Route path="/admin/dashboard/profile" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <div className="p-8 max-w-2xl mx-auto">
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">Admin Profile</h1>
-                <p className="text-gray-500">Admin profile settings.</p>
-              </div>
-            </ProtectedRoute>
+            <ProtectedRoute allowedRoles={['admin']}><CompanyProfile /></ProtectedRoute>
           } />
 
           {/* Fallback */}

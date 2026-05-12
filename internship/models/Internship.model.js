@@ -5,14 +5,14 @@ class InternshipModel {
         const { company_id, title, description, requirements, trade, level_required, location, duration, deadline, status } = internshipData;
         const [result] = await promisePool.execute(
             'INSERT INTO internships (company_id, title, description, requirements, trade, level_required, location, duration, deadline, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [company_id, title, description, requirements, trade, level_required || 'Any', location, duration, deadline, status || 'pending']
+            [company_id, title, description || null, requirements || null, trade, level_required || 'Any', location || null, duration || null, deadline, status || 'pending']
         );
         return result.insertId;
     }
 
     static async findById(internshipId) {
         const [rows] = await promisePool.execute(
-            `SELECT i.*, c.company_name, c.location as company_location 
+            `SELECT i.*, c.company_name, c.location as company_location, c.phone as company_phone
              FROM internships i 
              JOIN companies c ON i.company_id = c.company_id 
              WHERE i.internship_id = ?`,
@@ -41,7 +41,7 @@ class InternshipModel {
 
     static async getAllAvailable(studentTrade = null, studentLevel = null, page = 1, limit = 10) {
         const offset = (page - 1) * limit;
-        let query = `SELECT i.*, c.company_name, c.location as company_location 
+        let query = `SELECT i.*, c.company_name, c.location as company_location, c.phone as company_phone
                      FROM internships i 
                      JOIN companies c ON i.company_id = c.company_id 
                      WHERE i.status = 'approved' AND i.deadline >= CURDATE()`;
@@ -79,7 +79,7 @@ class InternshipModel {
 
     static async getPublicInternships(trade = null, level = null, page = 1, limit = 12) {
         const offset = (page - 1) * limit;
-        let query = `SELECT i.*, c.company_name, c.location as company_location 
+        let query = `SELECT i.*, c.company_name, c.location as company_location, c.phone as company_phone
                      FROM internships i 
                      JOIN companies c ON i.company_id = c.company_id 
                      WHERE i.status = 'approved' AND i.deadline >= CURDATE()`;
@@ -142,7 +142,7 @@ class InternshipModel {
     static async getPending(page = 1, limit = 10) {
         const offset = (page - 1) * limit;
         const [rows] = await promisePool.execute(
-            `SELECT i.*, c.company_name 
+            `SELECT i.*, c.company_name, c.phone as company_phone
              FROM internships i 
              JOIN companies c ON i.company_id = c.company_id 
              WHERE i.status = 'pending' 

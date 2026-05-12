@@ -1,150 +1,128 @@
 # 🎓 Internship Provider — Rwanda TVET Board
 
-Rwanda's premier TVET internship placement platform. Built with **React**, **Tailwind CSS**, **Node.js**, and **Express**.
+Rwanda's premier TVET internship placement platform.  
+**Stack:** React 18 + Vite · Tailwind CSS · Node.js · Express · MySQL
 
 ---
 
-## 🚀 Quick Start
+## 🚀 How to Run
 
-### 1. Database Setup
-1. Open **phpMyAdmin** or MySQL CLI
-2. Run the SQL file:
-   ```sql
-   source database.sql
-   ```
-   Or import `database.sql` via phpMyAdmin.
+### Prerequisites
+- Node.js v18+
+- XAMPP (MySQL running on port 3306)
 
-### 2. Backend Setup
+### 1 — Start MySQL
+Open XAMPP Control Panel and start **MySQL**.
+
+### 2 — Setup Database
+Open phpMyAdmin → Import → select `internship/database.sql`  
+*(Database `internship_provider` will be created automatically)*
+
+### 3 — Start Backend
 ```bash
 cd internship
-npm install
-npm run dev
+npm install        # first time only
+npm run dev        # runs on http://localhost:5000
 ```
-Backend runs on: `http://localhost:5000`
 
-### 3. Frontend Setup
+### 4 — Start Frontend
 ```bash
 cd internship/client
-npm install
-npm start
+npm install        # first time only
+npm run dev        # runs on http://localhost:3000
 ```
-Frontend runs on: `http://localhost:3000`
+
+Open **http://localhost:3000** in your browser.
 
 ---
 
-## 🔐 Default Admin Credentials
+## 🔐 Login Credentials
 
-The admin logs in via the **Company** portal:
+### Admin (via Company portal)
+| Field    | Value                           |
+|----------|---------------------------------|
+| Email    | `admin@internshipprovider.rw`   |
+| Password | `Admin@1234`                    |
+| Tab      | **Company / Admin**             |
 
-| Field    | Value                              |
-|----------|------------------------------------|
-| Email    | `admin@internshipprovider.rw`      |
-| Password | `password` (bcrypt hash in DB)     |
-| Role     | Select **Company / Admin**         |
-
-> The system detects `is_admin = true` on the company account and grants admin access automatically.
+### Student / Company
+Register a new account at `/register`
 
 ---
 
-## 🏗️ Project Structure
+## 👥 User Roles
+
+| Role    | What they can do |
+|---------|-----------------|
+| **Student** | Browse internships matched to their trade & level, apply, upload CV |
+| **Company** | Post internships (pending admin approval), manage applications |
+| **Admin** | Approve/reject internships, manage all students & companies |
+
+---
+
+## 🎓 TVET Trades & Levels
+
+| Code | Trade | Levels |
+|------|-------|--------|
+| NIT | Network Infrastructure Technology | L3, L4, L5 |
+| SOD | Software Development | L3, L4, L5 |
+| FBO | Finance & Banking Operations | L3, L4, L5 |
+| CSA | Computer Systems Analysis | L3, L4, L5 |
+| ETE | Electronics & Telecommunication Engineering | L3, L4, L5 |
+| BDC | Business Development & Commerce | L3, L4, L5 |
+| Electricity | Electrical Installation & Maintenance | L3, L4, L5 |
+| Tourism | Tourism & Hospitality Management | L3, L4, L5 |
+| Agriculture | Agriculture & Food Technology | L3, L4, L5 |
+| Construction | Construction Technology | L3, L4, L5 |
+| Automotive | Automotive Technology | L3, L4, L5 |
+| Fashion | Fashion & Garment Technology | L3, L4, L5 |
+
+---
+
+## � Project Structure
 
 ```
 internship/
-├── server.js              # Express server
-├── .env                   # Environment variables
-├── database.sql           # MySQL schema + seed data
-├── config/
-│   └── database.js        # MySQL connection pool
-├── controllers/           # Route handlers
-├── middleware/
-│   └── auth.js            # JWT authentication
-├── models/                # Database models
-├── routes/                # API routes
-├── uploads/cvs/           # Student CV uploads
-└── client/                # React frontend
-    ├── public/
-    ├── src/
-    │   ├── App.js
-    │   ├── index.js
-    │   ├── index.css       # Tailwind CSS
-    │   ├── components/     # Reusable components
-    │   ├── constants/      # Trades & levels data
-    │   ├── context/        # Auth context
-    │   ├── pages/          # Page components
-    │   │   ├── Home.jsx
-    │   │   ├── Login.jsx
-    │   │   ├── Register.jsx
-    │   │   ├── Internships.jsx
-    │   │   ├── student/    # Student dashboard
-    │   │   ├── company/    # Company dashboard
-    │   │   └── admin/      # Admin dashboard
-    │   └── services/
-    │       └── api.js      # Axios API service
-    ├── tailwind.config.js
-    └── package.json
+├── server.js              ← Express API server (port 5000)
+├── .env                   ← Environment config
+├── database.sql           ← MySQL schema + seed data
+├── config/database.js     ← MySQL connection
+├── controllers/           ← Route logic
+├── middleware/auth.js     ← JWT authentication
+├── models/                ← Database models
+├── routes/                ← API routes
+├── uploads/cvs/           ← Student CV uploads
+└── client/                ← React + Vite frontend (port 3000)
+    ├── index.html
+    ├── vite.config.mjs
+    ├── tailwind.config.cjs
+    └── src/
+        ├── main.jsx
+        ├── App.jsx
+        ├── index.css
+        ├── components/    ← Navbar, Footer, InternshipCard, etc.
+        ├── constants/     ← TVET trades & levels data
+        ├── context/       ← Auth context (JWT state)
+        ├── pages/         ← Home, Login, Register, Internships
+        │   ├── student/   ← Student dashboard, profile, applications
+        │   ├── company/   ← Company dashboard, profile, applications
+        │   └── admin/     ← Admin dashboard
+        └── services/api.js ← Axios API client
 ```
 
 ---
 
-## 🎓 TVET Trades Supported
+## 📡 Key API Endpoints
 
-| Code        | Trade Name                              | Levels    |
-|-------------|------------------------------------------|-----------|
-| NIT         | Network Infrastructure Technology        | L3, L4, L5 |
-| SOD         | Software Development                     | L3, L4, L5 |
-| FBO         | Finance & Banking Operations             | L3, L4, L5 |
-| CSA         | Computer Systems Analysis                | L3, L4, L5 |
-| ETE         | Electronics & Telecommunication Eng.     | L3, L4, L5 |
-| BDC         | Business Development & Commerce          | L3, L4, L5 |
-| Electricity | Electrical Installation & Maintenance    | L3, L4, L5 |
-| Tourism     | Tourism & Hospitality Management         | L3, L4, L5 |
-| Agriculture | Agriculture & Food Technology            | L3, L4, L5 |
-| Construction| Construction Technology                  | L3, L4, L5 |
-| Automotive  | Automotive Technology                    | L3, L4, L5 |
-| Fashion     | Fashion & Garment Technology             | L3, L4, L5 |
-
----
-
-## 🔑 User Roles
-
-| Role    | Access                                                    |
-|---------|-----------------------------------------------------------|
-| Student | Browse & apply for internships matched to trade/level     |
-| Company | Post internships, manage applications                     |
-| Admin   | Approve/reject internships, manage users (logs in as company) |
-
----
-
-## 📡 API Endpoints
-
-### Auth
-- `POST /api/auth/register/student` — Register student
-- `POST /api/auth/register/company` — Register company
-- `POST /api/auth/login` — Login (role: student | company)
-
-### Public
-- `GET /api/internships/public` — Browse approved internships (filter by trade/level)
-
-### Student (requires JWT)
-- `GET /api/students/profile`
-- `PUT /api/students/profile`
-- `POST /api/students/upload-cv`
-- `GET /api/students/internships` — Matched internships
-- `POST /api/students/apply`
-- `GET /api/students/applications`
-
-### Company (requires JWT)
-- `GET/PUT /api/companies/profile`
-- `POST /api/companies/internships`
-- `GET /api/companies/internships`
-- `GET /api/companies/internships/:id/applications`
-- `PUT /api/companies/applications/:id/status`
-- `DELETE /api/companies/internships/:id`
-
-### Admin (requires JWT with admin role)
-- `GET /api/admin/dashboard`
-- `GET /api/admin/students`
-- `GET /api/admin/companies`
-- `GET /api/admin/internships/pending`
-- `PUT /api/admin/internships/:id/approve`
-- `PUT /api/admin/internships/:id/reject`
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/internships/public` | None | Browse approved internships |
+| POST | `/api/auth/register/student` | None | Register student |
+| POST | `/api/auth/register/company` | None | Register company |
+| POST | `/api/auth/login` | None | Login (role: student/company) |
+| GET | `/api/students/internships` | Student | Matched internships |
+| POST | `/api/students/apply` | Student | Apply for internship |
+| GET | `/api/students/applications` | Student | My applications |
+| POST | `/api/companies/internships` | Company | Post internship |
+| GET | `/api/admin/dashboard` | Admin | Stats overview |
+| PUT | `/api/admin/internships/:id/approve` | Admin | Approve internship |
