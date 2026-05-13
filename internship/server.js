@@ -34,6 +34,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Increase timeout for slow DB connections (Aiven free tier)
+app.use((req, res, next) => {
+  res.setTimeout(60000);
+  next();
+});
+
 // ── Health check (Render pings this to keep the service alive) ─
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

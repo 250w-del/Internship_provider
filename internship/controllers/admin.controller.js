@@ -5,11 +5,11 @@ const ApplicationModel = require('../models/Application.model');
 
 const getDashboardStats = async (req, res) => {
     try {
-        const students = await StudentModel.getAll(1, 1000);
-        const companies = await CompanyModel.getAll(1, 1000);
+        const students = await StudentModel.getAll(1, 100);
+        const companies = await CompanyModel.getAll(1, 100);
         const internships = await InternshipModel.getStats();
         const applications = await ApplicationModel.getStats();
-        const recentPlacements = await ApplicationModel.getRecentPlacements(10);
+        const recentPlacements = await ApplicationModel.getRecentPlacements(5);
 
         res.json({
             success: true,
